@@ -1,0 +1,1 @@
+export const BITRIX24_TRANSPORT = Symbol('BITRIX24_TRANSPORT');

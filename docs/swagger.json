@@ -1,0 +1,1178 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/health/live": {
+      "get": {
+        "operationId": "HealthController_live",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Liveness: process còn sống",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Readiness: kiểm tra PostgreSQL và Redis, trả 503 nếu có thành phần lỗi",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/v1/config/mappings": {
+      "get": {
+        "operationId": "SettingsController_getMappings",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Mapping field TikTok -> Bitrix24",
+        "tags": [
+          "config"
+        ]
+      },
+      "put": {
+        "operationId": "SettingsController_putMappings",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldMappingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "config"
+        ]
+      }
+    },
+    "/api/v1/config/rules": {
+      "get": {
+        "operationId": "SettingsController_getRules",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Rule convert Lead -> Deal và cấu hình pipeline stages",
+        "tags": [
+          "config"
+        ]
+      },
+      "put": {
+        "operationId": "SettingsController_putRules",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RulesDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "config"
+        ]
+      }
+    },
+    "/api/v1/config/campaign-spend": {
+      "get": {
+        "operationId": "SettingsController_getSpend",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Chi phí quảng cáo theo campaign (dùng tính CPL/ROI)",
+        "tags": [
+          "config"
+        ]
+      },
+      "put": {
+        "operationId": "SettingsController_putSpend",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampaignSpendDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "config"
+        ]
+      }
+    },
+    "/api/v1/jobs/dead-letters": {
+      "get": {
+        "operationId": "JobsController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Các job đã thất bại hết số lần retry",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/api/v1/jobs/dead-letters/retry": {
+      "post": {
+        "operationId": "JobsController_retry",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Chạy lại toàn bộ job trong dead letter queue",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/api/v1/leads": {
+      "get": {
+        "operationId": "LeadsController_list",
+        "parameters": [
+          {
+            "name": "source",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "new",
+                "synced",
+                "converted"
+              ]
+            }
+          },
+          {
+            "name": "campaign_id",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Danh sách lead (phân trang, lọc theo source/status/campaign)",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/api/v1/leads/{id}/convert-to-deal": {
+      "post": {
+        "operationId": "LeadsController_convert",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConvertLeadDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deal"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Convert lead thành deal thủ công",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/api/v1/leads/import": {
+      "post": {
+        "operationId": "LeadsController_import",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportLeadsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Batch import lead lịch sử (migration), xử lý qua cùng queue với webhook",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/api/v1/deals": {
+      "get": {
+        "operationId": "DealsController_list",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "open",
+                "won",
+                "lost"
+              ]
+            }
+          },
+          {
+            "name": "assigned_to",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Danh sách deal, lọc theo status (open/won/lost) và người phụ trách",
+        "tags": [
+          "deals"
+        ]
+      }
+    },
+    "/webhooks/tiktok/leads": {
+      "post": {
+        "operationId": "WebhooksController_tiktokLeads",
+        "parameters": [
+          {
+            "name": "TikTok-Signature",
+            "in": "header",
+            "description": "t=<unix>,s=<hmac_sha256_hex>",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TiktokWebhookDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": ""
+          }
+        },
+        "summary": "Nhận webhook TikTok Lead Generation. Trả 202 ngay, xử lý qua queue.",
+        "tags": [
+          "webhooks"
+        ]
+      }
+    },
+    "/webhooks/bitrix24/deals": {
+      "post": {
+        "operationId": "WebhooksController_bitrixDeals",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Bitrix24DealWebhookDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "webhooks"
+        ]
+      }
+    },
+    "/api/v1/analytics/conversion-rates": {
+      "get": {
+        "operationId": "AnalyticsController_conversionRates",
+        "parameters": [
+          {
+            "name": "date_range",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "30d",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Tỷ lệ chuyển đổi lead -> deal -> won",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/api/v1/analytics/campaign-performance": {
+      "get": {
+        "operationId": "AnalyticsController_campaignPerformance",
+        "parameters": [
+          {
+            "name": "date_range",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "30d",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Hiệu quả theo campaign: CPL, ROI, conversion rate, lead score trung bình",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/api/v1/analytics/dashboard": {
+      "get": {
+        "operationId": "AnalyticsController_dashboard",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Thống kê real-time cho dashboard",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/api/v1/reports/export": {
+      "get": {
+        "operationId": "AnalyticsController_export",
+        "parameters": [
+          {
+            "name": "date_range",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "30d",
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "csv",
+                "json"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Export lead ra CSV (mở được bằng Excel) hoặc JSON",
+        "tags": [
+          "analytics"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "TikTok Lead Ads -> Bitrix24 CRM",
+    "description": "Nhận lead từ TikTok Lead Generation, đồng bộ sang Bitrix24, convert deal theo rule và báo cáo hiệu quả.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "api-key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    },
+    "schemas": {
+      "FieldMappingDto": {
+        "type": "object",
+        "properties": {
+          "field_mapping": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Ví dụ { \"lead_data.email\": \"EMAIL[0][VALUE]\" }"
+          }
+        },
+        "required": [
+          "field_mapping"
+        ]
+      },
+      "DealRuleDto": {
+        "type": "object",
+        "properties": {
+          "condition": {
+            "type": "string",
+            "description": "Ví dụ: \"campaign.campaign_name CONTAINS 'sale' AND lead.score >= 50\""
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "create_deal"
+            ]
+          },
+          "pipeline_id": {
+            "type": "string"
+          },
+          "stage_id": {
+            "type": "string"
+          },
+          "probability": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "assigned_to": {
+            "type": "object",
+            "description": "User ID hoặc mảng user ID (round-robin)"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0
+          },
+          "currency": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "condition",
+          "action",
+          "pipeline_id",
+          "stage_id"
+        ]
+      },
+      "PipelineStageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "probability": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "semantic": {
+            "type": "string",
+            "enum": [
+              "won",
+              "lost"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "probability"
+        ]
+      },
+      "RulesDto": {
+        "type": "object",
+        "properties": {
+          "deal_rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DealRuleDto"
+            }
+          },
+          "pipeline_stages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PipelineStageDto"
+            }
+          }
+        },
+        "required": [
+          "deal_rules"
+        ]
+      },
+      "CampaignSpendDto": {
+        "type": "object",
+        "properties": {
+          "campaign_spend": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            },
+            "description": "campaign_id -> tổng chi phí (VND)"
+          }
+        },
+        "required": [
+          "campaign_spend"
+        ]
+      },
+      "ConvertLeadDto": {
+        "type": "object",
+        "properties": {
+          "pipeline_id": {
+            "type": "string"
+          },
+          "stage_id": {
+            "type": "string"
+          },
+          "probability": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "assigned_to": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      },
+      "Lead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "event_id của webhook đầu tiên tạo ra lead này."
+          },
+          "source": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "Số điện thoại chuẩn E.164, ví dụ +84901234567."
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "campaignId": {
+            "type": "string",
+            "nullable": true
+          },
+          "campaignName": {
+            "type": "string",
+            "nullable": true
+          },
+          "adId": {
+            "type": "string",
+            "nullable": true
+          },
+          "adName": {
+            "type": "string",
+            "nullable": true
+          },
+          "formId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ttclid": {
+            "type": "string",
+            "nullable": true
+          },
+          "score": {
+            "type": "number",
+            "description": "Điểm chất lượng lead 0-100."
+          },
+          "submissions": {
+            "type": "number",
+            "description": "Số lần người dùng gửi form (tăng khi bị dedupe)."
+          },
+          "rawData": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true,
+            "description": "Payload gốc của lần submit gần nhất."
+          },
+          "bitrix24Id": {
+            "type": "number",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "new",
+              "synced",
+              "converted"
+            ]
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "externalId",
+          "source",
+          "name",
+          "email",
+          "phone",
+          "city",
+          "campaignId",
+          "campaignName",
+          "adId",
+          "adName",
+          "formId",
+          "ttclid",
+          "score",
+          "submissions",
+          "rawData",
+          "bitrix24Id",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Deal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "leadId": {
+            "type": "string",
+            "description": "Mỗi lead chỉ convert thành tối đa 1 deal."
+          },
+          "lead": {
+            "$ref": "#/components/schemas/Lead"
+          },
+          "bitrix24Id": {
+            "type": "number",
+            "nullable": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string"
+          },
+          "pipelineId": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "probability": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "won",
+              "lost",
+              "open"
+            ]
+          },
+          "assignedTo": {
+            "type": "string",
+            "nullable": true,
+            "description": "ID user Bitrix24 phụ trách deal."
+          },
+          "closedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "tiktokSyncedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "leadId",
+          "bitrix24Id",
+          "title",
+          "amount",
+          "currency",
+          "pipelineId",
+          "stage",
+          "probability",
+          "status",
+          "assignedTo",
+          "closedAt",
+          "tiktokSyncedAt",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "TiktokCampaignDto": {
+        "type": "object",
+        "properties": {
+          "campaign_id": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "campaign_name": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "ad_id": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "ad_name": {
+            "type": "string",
+            "maxLength": 255
+          }
+        }
+      },
+      "TiktokFormDto": {
+        "type": "object",
+        "properties": {
+          "form_id": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "form_name": {
+            "type": "string",
+            "maxLength": 255
+          }
+        }
+      },
+      "TiktokLeadDataDto": {
+        "type": "object",
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "interests": {
+            "maxItems": 50,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "utm_source": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "utm_campaign": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "ttclid": {
+            "type": "string",
+            "maxLength": 255
+          }
+        }
+      },
+      "TiktokCustomQuestionDto": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "answer": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "question",
+          "answer"
+        ]
+      },
+      "TiktokWebhookDto": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string",
+            "description": "lead.generate | form.complete | user.interaction",
+            "maxLength": 100
+          },
+          "event_id": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "timestamp": {
+            "type": "number",
+            "description": "Unix timestamp (giây)"
+          },
+          "advertiser_id": {
+            "type": "string"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/TiktokCampaignDto"
+          },
+          "form": {
+            "$ref": "#/components/schemas/TiktokFormDto"
+          },
+          "lead_data": {
+            "$ref": "#/components/schemas/TiktokLeadDataDto"
+          },
+          "custom_questions": {
+            "maxItems": 50,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TiktokCustomQuestionDto"
+            }
+          }
+        },
+        "required": [
+          "event",
+          "event_id",
+          "timestamp"
+        ]
+      },
+      "ImportLeadsDto": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "description": "Danh sách payload lịch sử (cùng format webhook) để migrate.",
+            "maxItems": 1000,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TiktokWebhookDto"
+            }
+          }
+        },
+        "required": [
+          "events"
+        ]
+      },
+      "Bitrix24DealWebhookDto": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "FIELDS": {
+                "type": "object",
+                "properties": {
+                  "ID": {
+                    "type": "string"
+                  },
+                  "STAGE_ID": {
+                    "type": "string"
+                  },
+                  "OPPORTUNITY": {
+                    "type": "string"
+                  }
+                },
+                "selfRequired": true
+              }
+            },
+            "required": [
+              "FIELDS"
+            ]
+          },
+          "auth": {
+            "type": "object",
+            "properties": {
+              "application_token": {
+                "type": "string"
+              }
+            },
+            "required": []
+          }
+        },
+        "required": [
+          "event",
+          "data"
+        ]
+      }
+    }
+  }
+}
