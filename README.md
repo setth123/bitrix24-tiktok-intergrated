@@ -24,6 +24,7 @@ curl http://localhost:3000/health
 ### Cách 2: Chạy local (Node ≥ 24.9)
 
 ```bash
+nvm use                               # repo có .nvmrc (Node 24)
 cp .env.example .env
 docker compose up -d postgres redis   # hoặc dùng Postgres/Redis có sẵn, sửa .env cho khớp
 npm install
@@ -150,7 +151,7 @@ Rule được xét theo thứ tự, rule **đầu tiên** khớp sẽ được �
 
 **Bảo mật.** API key so sánh constant-time. Chữ ký TikTok là HMAC-SHA256 trên raw body kèm timestamp để chống replay. Bitrix24 webhook xác thực bằng `application_token`. Rate limit 100 req/phút/IP, webhook được nới lên 1000. PII gửi về TikTok được hash SHA-256 theo yêu cầu của Events API.
 
-**Phiên bản.** Dùng NestJS 12 (bản mới nhất, ESM-only). Project vẫn là CommonJS nhờ `require(esm)` của Node, nên cần **Node ≥ 24.9** (Jest chỉ hỗ trợ `require(esm)` từ phiên bản này). TypeORM 1.x không cho `undefined` trong `where`; app giữ hành vi chặt này để tránh vô tình match mọi bản ghi.
+**Phiên bản Node.** Đề yêu cầu NestJS mới nhất, tức NestJS 12, và các package của bản này chỉ phát hành dạng ESM. Project vẫn giữ CommonJS (quen thuộc với decorator của TypeORM/Nest) và nạp NestJS qua `require(esm)` của Node. App chạy được từ Node 22.12, nhưng Jest tự cài cơ chế nạp module riêng và chỉ hỗ trợ `require(esm)` từ **Node 24.9**. Vì vậy project chọn Node 24 LTS cho mọi môi trường (`.nvmrc`, Dockerfile, CI). Phương án thay thế là chuyển sang Vitest, nhưng đề yêu cầu Jest. TypeORM 1.x không cho `undefined` trong `where`; app giữ hành vi chặt này để tránh vô tình match mọi bản ghi.
 
 ### Giả định
 
